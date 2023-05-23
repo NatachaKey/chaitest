@@ -91,16 +91,14 @@ chai.should();
       });
 
       //same logic for other test cases
-//line 102 is it from app.js line 17 ? 
-// await page.$eval("#age", (el) => (el.value = "")); 
+//line 106 is it from app.js line 17 ? 
+
       it("should not create a person record without an age", async function () {
         await this.nameField.type("Fred");
-       // WRONG- DELETE later THIS LINE , BUT WHY IT IS NOT WORKING IF WE PASS AN EMPTY STRING? await this.ageField.type("");
+       // WHY IT IS NOT WORKING IF WE PASS AN EMPTY STRING?: await this.ageField.type("");
         await page.$eval("#age", (el) => (el.value = "")); 
         await this.addPerson.click();
         await sleep(200);
-        //why do we have two await here? I don´t get how do we get Please provide age from resultHandle?
-        //does this line mean just a json string that we get as a result?
         const resultData = await(
           await this.resultHandle.getProperty("textContent")
           ).jsonValue();
@@ -131,6 +129,3 @@ chai.should();
 })();
 
 
-//I just passed all the tests without adding code to puppeteer.js -  do we need them both?
-//it seems like mocha chai are testing on backend and puppeteer (using mocha chai) on frontend(clicks, input events that user can create)?
-//is that right? 
