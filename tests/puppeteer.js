@@ -5,17 +5,17 @@ const { server } = require("../app"); // what we test
 
 // Sleep function to introduce delays in asynchronous operations
 //to be sure- why do we need it? to wait until the previous test is executed?
-//creates a promise that is executed 1 time in time we specify later- 2s on line 79
-//in the time of execution is more than 200ms- it appears in red  for example(259ms)
+//creates a promise that is executed 1 time in time we specify later- 2s on line 80
+//if the time of execution is more than 200ms- it appears in red  for example(259ms)
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-//nables the Chai assertion style that allows to use natural language assertions
+//enables the Chai assertion style that allows to use natural language assertions
 chai.should();
 
 //immediately invoked async function expression to encapsulate test login 
-//what does encapsulation mean? are we "closing the fn until it is done?"
+//what does encapsulation mean? are we "closing" the fn until it is executed?"
 (async () => {
   //here we are grouping related tests together by the title of Functional Tests..
   describe("Functional Tests with Puppeteer", function () {
@@ -27,7 +27,7 @@ chai.should();
       this.timeout(5000);// before fn should be completed in 5 seconds?
       browser = await puppeteer.launch();
       page = await browser.newPage(); //create new page 
-      await page.goto("http://localhost:3000"); //navigato to localhost
+      await page.goto("http://localhost:3000"); //navigate to localhost
     });
 
      // After hook to close the browser and server after the tests finish
@@ -84,7 +84,7 @@ chai.should();
         console.log("at 1, resultData is ", resultData);
         resultData.should.include("A person record was added"); //exprected text set up in app.js line 25
         //how do these two lines work?
-        //we take resultDatas which is a JSON string and select ondex property
+        //we take resultDatas which is a JSON string and select index property
         //why is it between curly brackets?{}
         const { index } = JSON.parse(resultData);//Parses resultData as JSON to extract the index property.
         this.lastIndex = index;
@@ -95,7 +95,7 @@ chai.should();
 // await page.$eval("#age", (el) => (el.value = "")); 
       it("should not create a person record without an age", async function () {
         await this.nameField.type("Fred");
-       // WRONG- DELETE THIS LINE , BUT WHY IT IS NOT WORKING IF WE PASS AN EMPTY STRING? await this.ageField.type("");
+       // WRONG- DELETE later THIS LINE , BUT WHY IT IS NOT WORKING IF WE PASS AN EMPTY STRING? await this.ageField.type("");
         await page.$eval("#age", (el) => (el.value = "")); 
         await this.addPerson.click();
         await sleep(200);

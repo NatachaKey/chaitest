@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   getPerson.addEventListener("click", async (event) => {
     event.preventDefault();
-    // this line means that we are encoding index.value and assign it to a index1 variable to use it later (so they can be compatible with URLs, databases etc..)
+    // this line means that we are encoding index.value and assign it to a index1 variable to use it later (so it can be compatible with URLs, databases etc..)
     const index1 = encodeURIComponent(index.value);
     console.log("index 1 is ", index1);
     try {
