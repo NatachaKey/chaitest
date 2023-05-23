@@ -38,7 +38,7 @@ chai.should();
       return;
     });
 
- // Test case for checking the connection to the site
+ //Test case for checking the connection to the site
 
 
  //How does this code checks the connection to a browser? there is no login inside, why does 'done' is passed as an argumento to the fn?
