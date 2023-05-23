@@ -129,3 +129,4 @@ chai.should();
 })();
 
 
+//ask Akos for extra material about 'this' context/scopes/  enclosure/encapsulation 
