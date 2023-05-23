@@ -86,7 +86,7 @@ chai.should();
         //how do these two lines work?
         //we take resultDatas which is a JSON string and select index property
         //why is it between curly brackets?{}
-        const { index } = JSON.parse(resultData);//Parses resultData as JSON to extract the index property.
+        const { index } = JSON.parse(resultData);//Parses resultData as JSON to extract the index property (index:index).
         this.lastIndex = index;
       });
 
