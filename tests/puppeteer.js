@@ -83,9 +83,9 @@ chai.should();
         ).jsonValue();
         console.log("at 1, resultData is ", resultData);
         resultData.should.include("A person record was added"); //exprected text set up in app.js line 25
-        //how do these two lines work?
+
         //we take resultDatas which is a JSON string and select index property
-        //why is it between curly brackets?{}
+        //why is it between curly brackets?{} // are we destructuring resultData to extract index:index? {} are for extracting keys from resultData object
         const { index } = JSON.parse(resultData);//Parses resultData as JSON to extract the index property (index:index).
         this.lastIndex = index;
       });
