@@ -1,12 +1,14 @@
-const puppeteer = require("puppeteer"); //headless (?)browser use
+const puppeteer = require("puppeteer"); //headless == "without a graphical user interface". browser use
 require("dotenv").config();
 const chai = require("chai"); //assertions
 const { server } = require("../app"); // what we test
 
 // Sleep function to introduce delays in asynchronous operations
-//to be sure- why do we need it? to wait until the previous test is executed?
+//it will tell puppeteer to wait the given amount of milliseconds before moving to the next line in the test.
 //creates a promise that is executed 1 time in time we specify later- 2s on line 80
 //if the time of execution is more than 200ms- it appears in red  for example(259ms)
+// here it is mainly used to wait for the result of asynchrnous operations like when you click on a button. Since it takes a few milliseconds for the browser to take that click event, send the API request, and do something with the result. In the test we want to make sure we give the browser the time to do all that, before we check the output. 
+//check other methods to wait for async operations  https://stackoverflow.com/questions/46919013/puppeteer-wait-n-seconds-before-continuing-to-the-next-line
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -15,7 +17,9 @@ function sleep(ms) {
 chai.should();
 
 //immediately invoked async function expression to encapsulate test login 
-//what does encapsulation mean? are we "closing" the fn until it is executed?"
+//this approach allows immediately running a function but without saving it to a variable or giving it a name; so after it's been run once; no other code in the file/application can run it again or access any variables that were defined inside the IIFE.
+//Encapsulation = A concept from object-oriented-programming (OOP). It's the idea of combining data and methods in some format that makes access to that data/methods restricted from the outside. Common ways of achieving encapsulation in Javascript are using objects, closures, IIFEs, and classes.
+//In this case, we're encapsulating all the test logic; in order to group them together and make the variables not accessible from the outside. 
 (async () => {
   //here we are grouping related tests together by the title of Functional Tests..
   describe("Functional Tests with Puppeteer", function () {
@@ -24,9 +28,9 @@ chai.should();
 
     // Before hook to set up the browser and page before the tests are executed
     before(async function () {
-      this.timeout(5000);// before fn should be completed in 5 seconds?
+      this.timeout(5000);// 5s  for Puppeteer to launch and navigate to our server's home page. generally for a straightforward server application we probably won't need to adjust the default timeout like this.
       browser = await puppeteer.launch();
-      page = await browser.newPage(); //create new page 
+      page = await browser.newPage(); //create new page= headless Chrome browser is opening a new tab.
       await page.goto("http://localhost:3000"); //navigate to localhost
     });
 
@@ -41,16 +45,25 @@ chai.should();
  //Test case for checking the connection to the site
 
 
- //How does this code checks the connection to a browser? there is no login inside, why does 'done' is passed as an argumento to the fn?
+ //This test isn't really validating anything; but if it completes successfully, then we know that no errors or issues happened with the before hook. 
     describe("got to site", function () {
       it("should have completed a connection", function (done) {
         done();
       });
     });
+//or:
+//describe("got to site", function () {
+  // it("should have completed a connection to the server home page", function (done) {
+  //   const currentUrl = page.url(); // Access the page.url method: https://pptr.dev/api/puppeteer.page.url
+  //     chai.expect(currentUrl).to.equal("http://localhost:3000/");
+  //     done();
+  //   });
+  // });
+
 
      // Test suite for the people form
     describe("people form", function () {
-      this.timeout(5000); // do we set time to see if it´s running fast and is ok for the user??
+      this.timeout(5000); // we're allowing each test in this describe block 5 seconds to complete.
       // Test case to check the presence of various form elements
       it("should have various elements", async function () {
         // Code to select and assert the presence of form elements
@@ -77,7 +90,7 @@ chai.should();
         await this.nameField.type("Fred");
         await this.ageField.type("10");
         await this.addPerson.click();
-        await sleep(200); // async fn is expected to be completed in 2s
+        await sleep(200); // async fn is expected to be completed in 0.2s
         const resultData = await (
           await this.resultHandle.getProperty("textContent")
         ).jsonValue();
@@ -85,7 +98,7 @@ chai.should();
         resultData.should.include("A person record was added"); //exprected text set up in app.js line 25
 
         //we take resultDatas which is a JSON string and select index property
-        //why is it between curly brackets?{} // are we destructuring resultData to extract index:index? {} are for extracting keys from resultData object
+        //the value of resultData will be a string like: '{"message":"A person record was added.","index":0}'
         const { index } = JSON.parse(resultData);//Parses resultData as JSON to extract the index property (index:index).
         this.lastIndex = index;
       });
@@ -95,7 +108,10 @@ chai.should();
 
       it("should not create a person record without an age", async function () {
         await this.nameField.type("Fred");
-       // WHY IT IS NOT WORKING IF WE PASS AN EMPTY STRING?: await this.ageField.type("");
+        //another way to clear the input:
+       // await this.ageField.click();
+       // await page.keyboard.press('Backspace')
+      //  await page.keyboard.press('Backspace')
         await page.$eval("#age", (el) => (el.value = "")); 
         await this.addPerson.click();
         await sleep(200);
@@ -128,5 +144,4 @@ chai.should();
   });
 })();
 
-
-//ask Akos for extra material about 'this' context/scopes/  enclosure/encapsulation 
+ 

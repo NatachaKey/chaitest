@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     // this line means that we are encoding index.value and assign it to a index1 variable to use it later (so it can be compatible with URLs, databases etc..)
     const index1 = encodeURIComponent(index.value);
+// it's a good practice to encode the value if it's something a user is arbitrarily giving you, before you use it in a URL. 
+// The encodeURIComponent function will replace any characters that are not compatible with URLs with an "escaped" verison of that character that is compatible with URLs.
+// So any booleans and numbers will become strings. Any values that mean something else in a URL, like colons (:, usually used to separate the hostname from the port), slashes (/, usually used to separate paths in a URL), etc will be converted into their "URL-encoded" format. So : becomes %3A and / becomes %2F, and the boolean true becomes the string "true" and the number 123 becomes a string "123".
     console.log("index 1 is ", index1);
     try {
       const response = await fetch(`/api/v1/people/${index1}`, {
